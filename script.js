@@ -28,16 +28,22 @@ sources.forEach(source => {
   // 例えば
   // srcset="./assets/img/960-540.png, ./assets/img/1920-1080.png 2x"
   // から
-  // "./assets/img/960-540.png"と"./assets/img/1920-1080.png"を抽出する
+  // "./assets/img/960-540.png"と"./assets/img/1920-1080.png"
+  // を抽出する
   const srcset = source.getAttribute("srcset");
   const matchs = [...srcset.matchAll(regexp)];
 
   if(matchs.length > 0){
-    // srcsetの最初に書かれていた画像のパスが対象
+    // srcsetの1つ目の画像のパスが対象
+    // 例えば
+    // srcset="./assets/img/960-540.png, ./assets/img/1920-1080.png 2x"
+    // なら
+    // "./assets/img/960-540.png"
+    // が対象となる
     const src = matchs[0][0];
     // image-sizeを使用して画像のサイズを取得
     const dimensions = sizeOf(path.join(srcRoot, src));
-    // width/heightをsourceタグにセット
+    // width/heightをsourceタグに付与
     source.setAttribute("width", dimensions.width);
     source.setAttribute("height", dimensions.height);
   }
@@ -47,7 +53,7 @@ imgs.forEach(img => {
   const src = img.getAttribute("src");
   // image-sizeを使用して画像のサイズを取得
   const dimensions = sizeOf(path.join(srcRoot, src));
-  // width/heightをimgタグにセット
+  // width/heightをimgタグに付与
   img.setAttribute("width", dimensions.width);
   img.setAttribute("height", dimensions.height);
 });
