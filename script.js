@@ -10,9 +10,10 @@ const root = path.join(__dirname, "/");
 const srcRoot = path.join(root, "src/");
 const distRoot = path.join(root, "dist/")
 
-// jsdomでsrc/index.htmlを取得
-const { JSDOM } = jsdom;
+// fsでsrc/index.htmlを取得
 const html = fs.readFileSync(`${path.join(srcRoot, "index.html")}`, "utf-8");
+// jsdomでDOM操作できるように
+const { JSDOM } = jsdom;
 const dom = new JSDOM(html);
 const doc = dom.window.document;
 
@@ -24,7 +25,10 @@ const imgs = doc.querySelectorAll("img");
 const regexp = /\S+\.(jpg|png|gif|webp)/g;
 sources.forEach(source => {
   // srcsetから画像のパスだけ取得する
-  // 例えば:
+  // 例えば
+  // srcset="./assets/img/960-540.png, ./assets/img/1920-1080.png 2x"
+  // から
+  // "./assets/img/960-540.png"と"./assets/img/1920-1080.png"を抽出する
   const srcset = source.getAttribute("srcset");
   const matchs = [...srcset.matchAll(regexp)];
 
@@ -61,11 +65,11 @@ if(!fs.existsSync(distRoot)){
     if (err) throw err;
   });
 }
-// dist/index.htmlにwidth/heightを挿入したファイルを吐き出す
+// dist/index.htmlにwidth/heightを付与したファイルを吐き出す
 fs.writeFile(`${root}dist/index.html`, mini, error => {
   if (error) throw error;
 });
 // dist/assets/img/以下に画像ファイルをコピー
-cpx.copy(`${srcRoot}assets/img/*.{jpg,png,webp}`, `${root}dist/assets/img/`, error => {
+cpx.copy(`${srcRoot}assets/img/*.{jpg,png,gif,webp}`, `${root}dist/assets/img/`, error => {
   if (error) throw error;
 })
